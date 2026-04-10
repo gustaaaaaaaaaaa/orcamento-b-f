@@ -6,13 +6,13 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="manifest" href="/orcamento-bf/manifest.json">
+  /orcamento-bf/manifest.json
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="B&F">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <link rel="apple-touch-icon" href="/orcamento-bf/icon-192.png">
+  /orcamento-bf/icon-192.png
 
   <style>
     body {
@@ -27,9 +27,9 @@
     }
 
     label {
-      font-weight: 600;
       display: block;
       margin-top: 20px;
+      font-weight: 600;
     }
 
     select, input {
@@ -62,6 +62,21 @@
 <h1>B&F – Orçamento</h1>
 <p>Lançamento rápido de despesas</p>
 
+<label>Mês da despesa</label>
+<select id="mes">
+  <option value="">Selecione…</option>
+  <option value="H">Janeiro</option>
+  <option value="I">Fevereiro</option>
+  <option value="J">Março</option>
+  <option value="K">Abril</option>
+  <option value="L">Maio</option>
+  <option value="M">Junho</option>
+  <option value="N">Julho</option>
+  <option value="O">Agosto</option>
+  <option value="P">Setembro</option>
+  <option value="Q">Outubro</option>
+</select>
+
 <label>Tipo de despesa</label>
 <select id="tipo">
   <option value="">Selecione…</option>
@@ -82,21 +97,34 @@
 <div id="msg"></div>
 
 <script>
-  function salvar() {
+  async function salvar() {
+    const mesColuna = document.getElementById('mes').value;
     const tipo = document.getElementById('tipo').value;
     const valor = document.getElementById('valor').value;
 
-    if (!tipo || !valor) {
+    if (!mesColuna || !tipo || !valor) {
       document.getElementById('msg').innerText =
-        'Preencha o tipo e o valor.';
+        'Preencha o mês, o tipo e o valor.';
       return;
     }
 
+    // 🚀 chamada para o backend (soma no Excel)
+    await fetch("https://SEU_BACKEND_URL/despesas/adicionar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mesColuna,
+        tipo,
+        valor: Number(valor)
+      })
+    });
+
     document.getElementById('msg').innerText =
-      'Despesa registrada (simulação).';
+      'Despesa adicionada com sucesso ✅';
 
     document.getElementById('valor').value = '';
     document.getElementById('tipo').value = '';
+    document.getElementById('mes').value = '';
   }
 </script>
 
