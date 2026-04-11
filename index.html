@@ -1,46 +1,135 @@
 <script>
-  async function salvar() {
-    const mesColuna = document.getElementById("mes").value;
-    const tipo = document.getElementById("tipo").value;
-    const valor = document.getElementById("valor").value;
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>B&F – Orçamento</title>
 
-    const msg = document.getElementById("msg");
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  /orcamento-bf/manifest.json
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="B&F">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  /orcamento-bf/icon-192.png
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 5px;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      background: #d4af37;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+    }
+
+    #msg {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>B&F – Orçamento</h1>
+<p>Lançamento rápido de despesas</p>
+
+<label>Mês da despesa</label>
+<select id="mes">
+  <option value="">Selecione…</option>
+  <option value="H">Janeiro</option>
+  <option value="I">Fevereiro</option>
+  <option value="J">Março</option>
+  <option value="K">Abril</option>
+  <option value="L">Maio</option>
+  <option value="M">Junho</option>
+  <option value="N">Julho</option>
+  <option value="O">Agosto</option>
+  <option value="P">Setembro</option>
+  <option value="Q">Outubro</option>
+</select>
+
+<label>Tipo de despesa</label>
+<select id="tipo">
+  <option value="">Selecione…</option>
+  <option>Alimentação</option>
+  <option>Transporte</option>
+  <option>Compras</option>
+  <option>Educação</option>
+  <option>Saúde</option>
+  <option>Entretenimento</option>
+  <option>Outros</option>
+</select>
+
+<label>Valor</label>
+<input type="number" id="valor" placeholder="0,00">
+
+<button onclick="salvar()">Adicionar despesa</button>
+
+<div id="msg"></div>
+
+<script>
+  async function salvar() {
+    const mesColuna = document.getElementById('mes').value;
+    const tipo = document.getElementById('tipo').value;
+    const valor = document.getElementById('valor').value;
 
     if (!mesColuna || !tipo || !valor) {
-      msg.innerText = "Preencha mês, tipo e valor.";
+      document.getElementById('msg').innerText =
+        'Preencha o mês, o tipo e o valor.';
       return;
     }
 
-    try {
-      const response = await fetch(
-        "https://bf-backend-dfly.onrender.com/despesas/adicionar",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            mesColuna,
-            tipo,
-            valor: Number(valor)
-          })
-        }
-      );
+    // 🚀 chamada para o backend (soma no Excel)
+    await fetch("https://bf-backend-dfly.onrender.com/despesas/adicionar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mesColuna,
+        tipo,
+        valor: Number(valor)
+      })
+    });
 
-      msg.innerText = "Status do backend: " + response.status;
+    document.getElementById('msg').innerText =
+      'Despesa adicionada com sucesso ✅';
 
-      if (response.ok) {
-        msg.innerText = "✅ Despesa adicionada com sucesso";
-        document.getElementById("valor").value = "";
-        document.getElementById("tipo").value = "";
-        document.getElementById("mes").value = "";
-      } else {
-        msg.innerText =
-          "❌ Erro ao salvar (status " + response.status + ")";
-      }
-    } catch (err) {
-      msg.innerText = "❌ Falha de conexão com o backend";
-      console.error(err);
-    }
+    document.getElementById('valor').value = '';
+    document.getElementById('tipo').value = '';
+    document.getElementById('mes').value = '';
   }
+</script>
+
+</body>
+</html>
+
 </script>
