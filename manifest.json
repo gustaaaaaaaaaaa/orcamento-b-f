@@ -1,21 +1,20 @@
 {
   "name": "Orçamento B&F",
   "short_name": "B&F",
-  "start_url": "/orcamento-bf/",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF",
   "icons": [
     {
-      "src": "/orcamento-bf/icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/orcamento-bf/icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ]
 }
-``
