@@ -4,11 +4,13 @@
   <meta charset="UTF-8" />
   <title>B&F – Orçamento</title>
 
+  <!-- iOS / Mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="B&F" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
+  <!-- PWA -->
   <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="/icon-192.png" />
 
@@ -27,11 +29,12 @@
       margin-top: 20px;
       font-weight: 600;
     }
-    select, input {
+    select,
+    input {
       width: 100%;
       padding: 12px;
       font-size: 16px;
-      margin-top: 5px;
+      margin-top: 6px;
     }
     button {
       margin-top: 30px;
@@ -72,7 +75,7 @@
   <label>Tipo de despesa</label>
   <select id="tipo">
     <option value="">Selecione…</option>
-    <!-- MANTER EXATAMENTE IGUAL À PLANILHA (G131:G144) -->
+    <!-- DEVEM SER IGUAIS À PLANILHA (G131:G144) -->
     <option>Alimentação</option>
     <option>Transporte</option>
     <option>Compras</option>
@@ -90,8 +93,9 @@
   <div id="msg"></div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
+    // PWA - obrigatório no iOS
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
     }
 
     async function salvar() {
@@ -108,18 +112,15 @@
       }
 
       try {
-        const res = await fetch(
-          "https://bf-backend-dfly.onrender.com/despesas/adicionar",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              mesColuna,
-              tipo,
-              valor: Number(valor)
-            })
-          }
-        );
+        const res = await fetch("/despesas/adicionar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mesColuna,
+            tipo,
+            valor: Number(valor)
+          })
+        });
 
         if (!res.ok) {
           const err = await res.json();
