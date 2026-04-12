@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>B&F – Orçamento</title>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="B&F" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-  <link rel="manifest" href="/manifest.json">
-
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="B&F">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
 
   <style>
     body {
@@ -21,24 +19,20 @@
       margin: 0;
       padding: 20px;
     }
-
     h1 {
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
-
     label {
       display: block;
       margin-top: 20px;
       font-weight: 600;
     }
-
     select, input {
       width: 100%;
       padding: 12px;
       font-size: 16px;
       margin-top: 5px;
     }
-
     button {
       margin-top: 30px;
       width: 100%;
@@ -49,7 +43,6 @@
       border: none;
       border-radius: 6px;
     }
-
     #msg {
       margin-top: 20px;
       font-weight: bold;
@@ -58,80 +51,90 @@
 </head>
 
 <body>
+  <h1>B&F – Orçamento</h1>
+  <p>Lançamento rápido de despesas</p>
 
-<h1>B&F – Orçamento</h1>
-<p>Lançamento rápido de despesas</p>
+  <label>Mês</label>
+  <select id="mes">
+    <option value="">Selecione…</option>
+    <option value="J">Março</option>
+    <option value="K">Abril</option>
+    <option value="L">Maio</option>
+    <option value="M">Junho</option>
+    <option value="N">Julho</option>
+    <option value="O">Agosto</option>
+    <option value="P">Setembro</option>
+    <option value="Q">Outubro</option>
+    <option value="R">Novembro</option>
+    <option value="S">Dezembro</option>
+  </select>
 
-<label>Mês da despesa</label>
-<select id="mes">
-  <option value="">Selecione…</option>
-  <option value="H">Janeiro</option>
-  <option value="I">Fevereiro</option>
-  <option value="J">Março</option>
-  <option value="K">Abril</option>
-  <option value="L">Maio</option>
-  <option value="M">Junho</option>
-  <option value="N">Julho</option>
-  <option value="O">Agosto</option>
-  <option value="P">Setembro</option>
-  <option value="Q">Outubro</option>
-</select>
+  <label>Tipo de despesa</label>
+  <select id="tipo">
+    <option value="">Selecione…</option>
+    <!-- MANTER EXATAMENTE IGUAL À PLANILHA (G131:G144) -->
+    <option>Alimentação</option>
+    <option>Transporte</option>
+    <option>Compras</option>
+    <option>Educação</option>
+    <option>Saúde</option>
+    <option>Entretenimento</option>
+    <option>Outros</option>
+  </select>
 
-<label>Tipo de despesa</label>
-<select id="tipo">
-  <option value="">Selecione…</option>
-  <option>Alimentação</option>
-  <option>Transporte</option>
-  <option>Compras</option>
-  <option>Educação</option>
-  <option>Saúde</option>
-  <option>Entretenimento</option>
-  <option>Outros</option>
-</select>
+  <label>Valor</label>
+  <input type="number" id="valor" placeholder="0,00" step="0.01" />
 
-<label>Valor</label>
-<input type="number" id="valor" placeholder="0,00">
+  <button onclick="salvar()">Adicionar despesa</button>
 
-<button onclick="salvar()">Adicionar despesa</button>
+  <div id="msg"></div>
 
-<div id="msg"></div>
-
-<script>
-  async function salvar() {
-    const mesColuna = document.getElementById('mes').value;
-    const tipo = document.getElementById('tipo').value;
-    const valor = document.getElementById('valor').value;
-
-    if (!mesColuna || !tipo || !valor) {
-      document.getElementById('msg').innerText =
-        'Preencha o mês, o tipo e o valor.';
-      return;
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
     }
 
-    // 🚀 chamada para o backend (soma no Excel)
-    await fetch("https://bf-backend-dfly.onrender.com/despesas/adicionar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        mesColuna,
-        tipo,
-        valor: Number(valor)
-      })
-    });
+    async function salvar() {
+      const mesColuna = document.getElementById("mes").value;
+      const tipo = document.getElementById("tipo").value;
+      const valor = document.getElementById("valor").value;
+      const msg = document.getElementById("msg");
 
-    document.getElementById('msg').innerText =
-      'Despesa adicionada com sucesso ✅';
+      msg.innerText = "";
 
-    document.getElementById('valor').value = '';
-    document.getElementById('tipo').value = '';
-    document.getElementById('mes').value = '';
-  }
-</script>
+      if (!mesColuna || !tipo || !valor) {
+        msg.innerText = "Preencha mês, tipo e valor.";
+        return;
+      }
 
+      try {
+        const res = await fetch(
+          "https://bf-backend-dfly.onrender.com/despesas/adicionar",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              mesColuna,
+              tipo,
+              valor: Number(valor)
+            })
+          }
+        );
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Erro ao salvar");
+        }
+
+        msg.innerText = "Despesa adicionada com sucesso ✅";
+        document.getElementById("valor").value = "";
+        document.getElementById("tipo").value = "";
+        document.getElementById("mes").value = "";
+
+      } catch (e) {
+        msg.innerText = "Erro: " + e.message;
+      }
+    }
+  </script>
 </body>
 </html>
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-}
-</script>
